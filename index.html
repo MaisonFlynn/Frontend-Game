@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Index</title>
+    <!-- Font(s) -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&display=swap" rel="stylesheet">
+    <!-- Style(s) -->
+    <link rel="stylesheet" href="styles/style.css">
+</head>
+
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="header-content">
+            <span>Logo</span>
+            <button id="news" onclick="news()">News</button>
+            <span id="user-name" style="margin-left: auto; display: none;">Hello, Username</span>
+            <button class="logout" id="logout" style="display: none;" onclick="logout()">Logout</button>
+        </div>
+    </div>
+
+    <!-- News "Popup" -->
+    <div id="news-container" class="news-container" style="display: none;">
+        <div class="news-content">
+            <span>News</span>
+        </div>
+    </div>
+
+    <!-- Main -->
+    <div class="main" id="main">
+        <!-- Advertisment -->
+        <div class="advertisement">
+            Advertisement
+        </div>
+
+        <!-- Screen -->
+        <div class="screen" tabindex="0"> <!-- Keyboard Input(s) -->
+            <div class="container" id="container">
+                <!-- Login -->
+                <div class="login">
+                    <form id="login-form" onsubmit="return login(event);" autocomplete="off" novalidate>
+                        <h1>Login</h1>
+                        <input type="email" id="login-email" placeholder="Email">
+                        <input type="password" id="login-password" placeholder="Password">
+                        <div class="checkbox-container">
+                            <input type="checkbox" id="login-show-password"
+                                onclick="togglePasswordVisibility('login-password')">
+                            <label for="login-show-password">Show Password</label>
+                        </div>
+                        <div class="button-container">
+                            <button type="button" onclick="front()">Register</button>
+                            <button type="submit" class="confirm">Login</button>
+                        </div>
+                        <span id="error-login" style="color:red;"></span>
+                        <span id="login-success" style="color:green;"></span>
+                    </form>
+                </div>
+
+                <!-- Register -->
+                <div class="register">
+                    <form id="register-form" onsubmit="return register();" autocomplete="off" novalidate>
+                        <h1>Register</h1>
+                        <input type="text" id="username" placeholder="Username">
+                        <span id="error-username" style="color:red;"></span>
+                        <input type="email" id="email" placeholder="Email">
+                        <span id="error-email" style="color:red;"></span>
+                        <input type="password" id="password" placeholder="Password">
+                        <input type="password" id="confirm-password" placeholder="Confirm Password">
+                        <div class="checkbox-container">
+                            <input type="checkbox" id="show-password"
+                                onclick="togglePasswordVisibility('password', 'confirm-password')">
+                            <label for="show-password">Show Password</label>
+                        </div>
+                        <div class="button-container">
+                            <button type="submit" class="confirm">Register</button>
+                            <button type="button" onclick="back()">Login</button>
+                        </div>
+                        <span id="error-password" style="color:red;"></span>
+                        <span id="register-success" style="color:green;"></span>
+                    </form>
+                </div>
+                <!-- Image -->
+            </div>
+
+            <!-- Game(s) -->
+            <div id="game" class="game" styles="display: none;">
+                Game
+            </div>
+        </div>
+
+        <!-- Advertisement -->
+        <div class="advertisement">
+            Advertisement
+        </div>
+    </div>
+
+    <!-- Script(s) -->
+    <script src="scripts/script.js"></script>
+</body>
+
+</html>
