@@ -8,8 +8,6 @@ html {
     padding: 0;
     font-family: 'Fredoka';
     background-color: #fff;
-    /* Prevent Scrolling */
-    overflow: hidden;
 }
 
 .header {
