@@ -107,7 +107,7 @@ function register() {
     }
 
     // Validate Username
-    if (username.length < 3 || username.length > 10 || /^\d/.test(username) || /\s/.test(username)) {
+    if (username.length < 3 || username.length > 10 || /^\d/.test(username) || /\s/.test(username) || /[^a-zA-Z0-9]/.test(username)) {
         errorUsername.textContent = "Invalid Username";
         return false;
     }
