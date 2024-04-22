@@ -451,9 +451,9 @@ input[type="checkbox"]:checked {
 h2,
 .coin-display span {
     position: absolute;
-    top: 15px;
+    top: 12.5px;
     right: 20px;
-    color: #D4AF37;
+    color: #E6BE8A;
     margin: 0;
     padding: 0;
 }
