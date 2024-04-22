@@ -138,7 +138,6 @@ input {
     width: 50%;
     padding: 15px;
     border-radius: 15px;
-    ;
     box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
 }
 
@@ -184,7 +183,11 @@ input {
     box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
 }
 
-.news-content span {
+.news-content span,
+.logout-content span,
+.delete-content span,
+.logout-content h1,
+.delete-content h1 {
     cursor: text;
 }
 
@@ -262,4 +265,90 @@ input[type="checkbox"]:checked {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+#logout-success,
+#delete-success {
+    display: none;
+    color: green;
+}
+
+.opacity {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.25);
+    z-index: 10;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.logout-container {
+    position: fixed;
+    top: 110px;
+    left: calc(50% - 232.5px);
+    width: 465px;
+    height: 600px;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 11;
+    cursor: pointer;
+    transition: transform 1s ease-in-out;
+    transform-style: preserve-3d;
+    perspective: 4000px;
+}
+
+.logout-content,
+.delete-content {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: 15px;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transition: transform 1s ease-in-out;
+    background: #fff;
+    cursor: default;
+    z-index: 12;
+}
+
+.delete-content {
+    /* Hide */
+    transform: rotateY(180deg);
+}
+
+.logout-container span,
+.delete-content span {
+    width: 75%;
+}
+
+.logout-content button,
+.delete-content button {
+    width: 50%;
+    padding: 15px;
+    border-radius: 15px;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
+}
+
+.red {
+    color: #fff;
+    background-color: #EF9A9A;
+    transition: background-color 0.3s ease;
+}
+
+.red:hover {
+    background-color: #E57373;
+}
+
+.red:active {
+    background-color: #EF5350;
 }
