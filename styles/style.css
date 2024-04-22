@@ -285,6 +285,7 @@ input[type="checkbox"]:checked {
     justify-content: center;
     align-items: center;
     cursor: pointer;
+    perspective: 4000px;
 }
 
 .logout-container {
@@ -300,7 +301,6 @@ input[type="checkbox"]:checked {
     cursor: pointer;
     transition: transform 1s ease-in-out;
     transform-style: preserve-3d;
-    perspective: 4000px;
 }
 
 .logout-content,
