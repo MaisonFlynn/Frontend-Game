@@ -387,11 +387,12 @@ function logoutContainer() {
     }
 }
 
-
 function closeLogout(event) {
     var opacity = document.getElementById('opacity');
     var logoutContainer = document.getElementById('logout-container');
     var header = document.querySelector('.header');
+    var flip = document.getElementById('logout-container');
+
 
     if (event) {
         var popupContentLogout = document.querySelector('.logout-content');
@@ -400,12 +401,14 @@ function closeLogout(event) {
             opacity.style.display = 'none';
             logoutContainer.style.display = 'none';
             header.style.pointerEvents = 'auto';
+            flip.style.transform = "rotateY(0deg)";
             document.removeEventListener('click', closeLogout, true);
         }
     } else {
         opacity.style.display = 'none';
         logoutContainer.style.display = 'none';
         header.style.pointerEvents = 'auto';
+        flip.style.transform = "rotateY(0deg)";
         document.removeEventListener('click', closeLogout, true);
     }
 }
