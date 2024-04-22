@@ -13,13 +13,13 @@ function back() {
     }
 }
 
-// Users (Simulation)
-var users = [
-    { email: 'Test', password: 'Test', username: 'Test' }
-];
-
 // Hide Game
 document.getElementById('game').style.display = 'none';
+
+// Simulate User Authentication
+if (!localStorage.getItem('users')) {
+    localStorage.setItem('users', JSON.stringify([]));
+}
 
 // Login Function
 function login(event) {
@@ -34,7 +34,7 @@ function login(event) {
     var container = document.getElementById('container');
     var game = document.getElementById('game');
 
-    game.style.display = 'none';
+    game.style.display = 'none'; // Hide Game
 
     // Check IF Empty
     if (!email || !password) {
@@ -47,10 +47,13 @@ function login(event) {
     loginSuccess.textContent = '';
 
     // Check Credentials
+    var users = JSON.parse(localStorage.getItem('users'));
     var user = users.find(user => user.email === email && user.password === password);
 
     if (user) {
         loginSuccess.textContent = 'Login Successful';
+        sessionStorage.setItem('currentUser', JSON.stringify(user));
+        updateUsernameDisplay(user.username);
         // Delay
         setTimeout(function () {
             logoutButton.style.display = 'block'; // Show Logout Button
@@ -81,6 +84,13 @@ function performLogin(email, password) {
 
 // Register Function
 function register() {
+    var users = JSON.parse(localStorage.getItem('users'));
+    var newUser = {
+        username: document.getElementById('username').value,
+        email: document.getElementById('email').value,
+        password: document.getElementById('password').value
+    };
+
     var username = document.getElementById('username').value;
     var email = document.getElementById('email').value;
     var password = document.getElementById('password').value;
@@ -137,12 +147,29 @@ function register() {
     }
 
     // IF Valid Login
-    users.push({ email, password, username });
+    users.push(newUser);
+    localStorage.setItem('users', JSON.stringify(users));
+    performLogin(newUser.email, newUser.password);
     registerSuccess.textContent = 'Registration Successful';
     clear();
-    performLogin(email, password);
+    performLogin(newUser.email, newUser.password);
 
     return false;
+}
+
+// Store User Progress
+function storeUserProgress(userId, progressData) {
+    var users = JSON.parse(localStorage.getItem('users'));
+    var user = users.find(user => user.id === userId);
+    user.progress = progressData;
+    localStorage.setItem('users', JSON.stringify(users));
+}
+
+// Load User Progress
+function loadUserProgress(userId) {
+    var users = JSON.parse(localStorage.getItem('users'));
+    var user = users.find(user => user.id === userId);
+    return user.progress;
 }
 
 // Perform Login
@@ -154,20 +181,33 @@ function performLogin(email, password) {
 
 // Logout Function
 function logout() {
+    document.getElementById('logout-success').style.display = 'block'; // Show
+
+    var logoutSuccess = document.getElementById('logout-success');
     var loginSuccess = document.getElementById('login-success');
     var registerSuccess = document.getElementById('register-success');
     var logoutButton = document.getElementById('logout');
     var userNameDisplay = document.getElementById('user-name');
     var container = document.getElementById('container');
     var game = document.getElementById('game');
+    var opacity = document.getElementById('opacity');
+
+    logoutSuccess.style.display = 'none';
+    logoutSuccess.textContent = '';
+    loginSuccess.textContent = '';
+    registerSuccess.textContent = '';
 
     // Reset Login Status
-    loginSuccess.textContent = ''; // Clear Message
-    if (registerSuccess) registerSuccess.textContent = '';
-    logoutButton.style.display = 'none'; // Hide Logout Button
-    userNameDisplay.style.display = 'none'; // Hide Username
-    container.style.display = 'flex'; // Show Container
-    game.style.display = 'none'; // Hide Game
+    setTimeout(function () {
+        logoutButton.style.display = 'none'; // Hide Logout Button
+        userNameDisplay.style.display = 'none'; // Hide Username
+        container.style.display = 'flex'; // Show Container
+        game.style.display = 'none'; // Hide Game
+        document.querySelector('.logout-container').style.display = 'none'; // Hide Logout
+        opacity.style.display = 'none';
+        clear();
+        view();
+    }, 1000);
 
     // Reset Show Password Checkboxes & Password Field Types
     var loginShowPasswordCheckbox = document.getElementById('login-show-password');
@@ -182,7 +222,7 @@ function logout() {
     passwordInput.type = 'password';
     confirmPasswordInput.type = 'password';
 
-    view();
+    sessionStorage.removeItem('currentUser');
 }
 
 // Clear Form(s) Function
@@ -202,6 +242,7 @@ function clear() {
     document.getElementById('error-password').textContent = '';
 }
 
+// Reset View
 function view() {
     var container = document.getElementById('container');
     if (container.style.transform.includes("180deg")) {
@@ -211,7 +252,7 @@ function view() {
     clear();
 }
 
-/* News "Popup" */
+// News "Popup"
 function news() {
     var popup = document.getElementById('news-container');
     popup.style.display = popup.style.display === 'none' ? 'flex' : 'none';
@@ -220,7 +261,7 @@ function news() {
     }
 }
 
-/* Close News "Popup" */
+// Close News "Popup" 
 function close(event) {
     var popupContent = document.querySelector('.news-content');
     if (!popupContent.contains(event.target)) {
@@ -246,5 +287,122 @@ function togglePasswordVisibility(passwordId, confirmPasswordId) {
         } else {
             confirmPasswordInput.type = "password";
         }
+    }
+}
+
+// Clear ALL Storage
+function clearAllStorage() {
+
+    document.getElementById('delete-success').style.display = 'block'; // Show
+
+    // Clear Local Storage
+    localStorage.clear();
+
+    // Clear Session Storage
+    sessionStorage.clear();
+
+    // Clear Cookies
+    document.cookie.split(";").forEach(function (c) {
+        document.cookie = c.trim().split("=")[0] + '=;expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/';
+    });
+
+    // Hide Logout
+    setTimeout(function () {
+        document.querySelector('.logout-container').style.display = 'none'; // Hide the logout container
+    }, 1000);
+    logout();
+    clear();
+}
+
+function forwards() {
+    var flip = document.getElementById('logout-container');
+    if (!flip.style.transform.includes("180deg")) {
+        flip.style.transform = "rotateY(180deg)";
+    }
+}
+
+function backwards() {
+    var flip = document.getElementById('logout-container');
+    if (flip.style.transform.includes("180deg")) {
+        flip.style.transform = "rotateY(0deg)";
+    }
+}
+
+function logoutContainer() {
+    var popup = document.getElementById('logout-container');
+    var header = document.querySelector('.header');
+
+    if (popup.style.display === 'none') {
+        popup.style.display = 'flex';
+        popup.classList.add('active');
+        header.style.pointerEvents = 'none';
+        document.addEventListener('click', closeLogout, true);
+    } else {
+        closeLogout();
+    }
+}
+
+function logoutContainer() {
+    var opacity = document.getElementById('opacity');
+    var logoutContainer = document.getElementById('logout-container');
+    var header = document.querySelector('.header');
+
+    if (logoutContainer.style.display === 'none') {
+        opacity.style.display = 'flex';
+        logoutContainer.style.display = 'flex';
+        header.style.pointerEvents = 'none';
+        displayAllUsers();
+        document.addEventListener('click', closeLogout, true);
+    } else {
+        closeLogout();
+    }
+}
+
+
+function closeLogout(event) {
+    var opacity = document.getElementById('opacity');
+    var logoutContainer = document.getElementById('logout-container');
+    var header = document.querySelector('.header');
+
+    if (event) {
+        var popupContentLogout = document.querySelector('.logout-content');
+        var popupContentDelete = document.querySelector('.delete-content');
+        if (!popupContentLogout.contains(event.target) && !popupContentDelete.contains(event.target)) {
+            opacity.style.display = 'none';
+            logoutContainer.style.display = 'none';
+            header.style.pointerEvents = 'auto';
+            document.removeEventListener('click', closeLogout, true);
+        }
+    } else {
+        opacity.style.display = 'none';
+        logoutContainer.style.display = 'none';
+        header.style.pointerEvents = 'auto';
+        document.removeEventListener('click', closeLogout, true);
+    }
+}
+
+function updateUsernameDisplay(username) {
+    var userGreetingSpans = document.querySelectorAll('#user-greeting');
+    userGreetingSpans.forEach(span => {
+        span.textContent = `Bye, ${username}`;
+    });
+}
+
+function displayAllUsers() {
+    var allUsersContainer = document.getElementById('all-users');
+    var users = JSON.parse(localStorage.getItem('users'));
+    if (users && users.length > 0) {
+        var usernames = users.map(user => user.username);
+        var formattedUsernames = '';
+        if (usernames.length > 1) {
+
+            formattedUsernames = usernames.slice(0, -1).join(', ') + ' & ' + usernames[usernames.length - 1];
+        } else {
+
+            formattedUsernames = usernames[0];
+        }
+        allUsersContainer.textContent = 'Bye, ' + formattedUsernames;
+    } else {
+        allUsersContainer.textContent = 'NO User(s)';
     }
 }
