@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Index</title>
+    <title>Frontend Game</title>
     <!-- Font(s) -->
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&display=swap" rel="stylesheet">
     <!-- Style(s) -->
@@ -18,7 +18,8 @@
             <span>Logo</span>
             <button id="news" onclick="news()">News</button>
             <span id="user-name" style="margin-left: auto; display: none;">Hello, Username</span>
-            <button class="logout" id="logout" style="display: none;" onclick="logout()">Logout</button>
+            <button class="logout" id="logout" style="display: none;" onclick="logoutContainer()">Logout</button>
+            <!-- Show Logout-Content -->
         </div>
     </div>
 
@@ -26,6 +27,34 @@
     <div id="news-container" class="news-container" style="display: none;">
         <div class="news-content">
             <span>News</span>
+        </div>
+    </div>
+
+    <!-- Logout "Popup" -->
+    <div class="opacity" id="opacity">
+        <div class="logout-container" id="logout-container" style="display: none;">
+            <!-- Logout -->
+            <div class="logout-content" id="logout-content">
+                <h1>Logout</h1>
+                <span id="user-greeting">Bye, Username</span>
+                <div class="button-container">
+                    <button onclick="forwards()">Delete</button>
+                    <button class="red" onclick="logout()">Logout</button>
+                </div>
+                <span id="logout-success">Logout Successful</span>
+            </div>
+            <!-- Delete -->
+            <div class="delete-content" style="transform: rotateY(180deg);">
+                <h1>Delete</h1>
+                <div id="all-users">
+                    <!-- Container FOR ALL User(s) -->
+                </div>
+                <div class="button-container">
+                    <button class="red" onclick="clearAllStorage()">Delete</button>
+                    <button onclick="backwards()">Logout</button>
+                </div>
+                <span id="delete-success">Deletion Successful</span>
+            </div>
         </div>
     </div>
 
