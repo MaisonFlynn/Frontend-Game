@@ -116,7 +116,39 @@
 
             <!-- Game(s) -->
             <div id="game" class="game" styles="display: none;">
-                Game
+                <!-- Name(s) -->
+                <h1>Games</h1>
+                <button id="open-rps">Rock Paper Scissors</button>
+                <h2>Coins <span id="user-coins">0</span></h2> <!-- Coins -->
+
+                <!-- Game(s) -->
+                <!-- Rock Paper Scissors -->
+                <div id="rps-overlay" class="game-overlay" style="display: none;">
+                    <div class="rps-container">
+                        <h1>Rock Paper Scissors</h1>
+                        <div class="scoreboard">
+                            <span class="user-name-game">Username</span> <span id="player-score">0</span>
+                            <span class="result-loss">/</span>
+                            <span>Computer <span id="cpu-score">0</span></span>
+                        </div>
+                        <div class="choices">
+                            <button class="choice" id="rock">
+                                <img src="images/Rock.png" alt="Rock">
+                            </button>
+                            <button class="choice" id="paper">
+                                <img src="images/Paper.png" alt="Paper">
+                            </button>
+                            <button class="choice" id="scissors">
+                                <img src="images/Scissors.png" alt="Scissors">
+                            </button>
+                        </div>
+
+                        <span id="result" class="result-text">Choose</span>
+                        <button id="replay" class="replay" style="display: none">
+                            Replay
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
 
