@@ -82,7 +82,7 @@ function login(event) {
     if (user) {
         loginSuccess.textContent = 'Login Successful';
         sessionStorage.setItem('currentUser', JSON.stringify(user));
-        updateUsernameDisplay(user.username);
+        updateUsernameDisplay();
         // Delay
         setTimeout(function () {
             logoutButton.style.display = 'block'; // Show Logout Button
@@ -90,6 +90,8 @@ function login(event) {
             userNameDisplay.style.display = 'block';
             game.style.display = 'flex';
             container.style.display = 'none';
+            updateUsernameDisplay();
+            updateGameUsername();
             clear();
         }, 1000);
     } else {
@@ -413,11 +415,19 @@ function closeLogout(event) {
     }
 }
 
-function updateUsernameDisplay(username) {
-    var userGreetingSpans = document.querySelectorAll('#user-greeting');
-    userGreetingSpans.forEach(span => {
-        span.textContent = `Bye, ${username}`;
-    });
+function updateUsernameDisplay() {
+    var currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
+    if (currentUser && currentUser.username) {
+        var userGreetingSpans = document.querySelectorAll('#user-greeting');
+        userGreetingSpans.forEach(span => {
+            span.textContent = `Bye, ${currentUser.username}`;
+        });
+        var userNameDisplays = document.querySelectorAll('#user-name, .user-name-game'); // Update all relevant username displays
+        userNameDisplays.forEach(display => {
+            display.textContent = `Hello, ${currentUser.username}`;
+            document.getElementById('user-coins').textContent = currentUser.coins || 0;
+        });
+    }
 }
 
 function displayAllUsers() {
@@ -436,5 +446,169 @@ function displayAllUsers() {
         allUsersContainer.textContent = 'Bye, ' + formattedUsernames;
     } else {
         allUsersContainer.textContent = 'NO User(s)';
+    }
+}
+
+/* Rock Papper Scissors */
+let playerScore = 0;
+let cpuScore = 0;
+
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.choice').forEach((button) => {
+        button.addEventListener('click', function () {
+            const playerChoice = this.id;
+            const cpuChoice = getCpuChoice();
+            const result = determineWinner(playerChoice, cpuChoice);
+            updateScore(result);
+            if (playerScore === 3 || cpuScore === 3) {
+                endGame();
+            }
+        });
+    });
+    initializeReplayButton();
+});
+
+function getCpuChoice() {
+    const choices = ['rock', 'paper', 'scissors'];
+    return choices[Math.floor(Math.random() * 3)];
+}
+
+function determineWinner(player, cpu) {
+    if (player === cpu) {
+        return 'draw';
+    } else if (
+        (player === 'rock' && cpu === 'scissors') ||
+        (player === 'paper' && cpu === 'rock') ||
+        (player === 'scissors' && cpu === 'paper')
+    ) {
+        return 'player';
+    } else {
+        return 'cpu';
+    }
+}
+
+function updateScore(result) {
+    const playerScoreSpan = document.getElementById('player-score');
+    const cpuScoreSpan = document.getElementById('cpu-score');
+    const resultText = document.getElementById('result');
+
+    if (result === 'player') {
+        playerScore++;
+        resultText.textContent = 'Win';
+        resultText.className = 'result-text result-win';
+    } else if (result === 'cpu') {
+        cpuScore++;
+        resultText.textContent = 'Loss';
+        resultText.className = 'result-text result-loss';
+    } else {
+        resultText.textContent = 'Draw';
+        resultText.className = 'result-text result-draw';
+    }
+
+    playerScoreSpan.textContent = playerScore;
+    cpuScoreSpan.textContent = cpuScore;
+}
+
+function endGame() {
+    const resultText = document.getElementById('result');
+    const choices = document.querySelectorAll('.choice');
+
+    choices.forEach(button => button.disabled = true);
+
+    if (playerScore === 3) {
+        resultText.textContent = 'Username Wins';
+        resultText.className = 'result-text result-win';
+        updateCoins(1);
+    } else {
+        resultText.textContent = 'Computer Wins';
+        resultText.className = 'result-text result-loss';
+    }
+    document.getElementById('replay').style.display = 'block';
+}
+
+function handleReplayClick(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    resetGame();
+}
+
+function resetGame() {
+    playerScore = 0;
+    cpuScore = 0;
+    updateScoreDisplay();
+    resetGameInterface();
+}
+
+function updateScoreDisplay() {
+    const resultText = document.getElementById('result');
+    document.getElementById('player-score').textContent = '0';
+    document.getElementById('cpu-score').textContent = '0';
+    resultText.textContent = 'Choose';
+    resultText.className = 'result-text';
+}
+
+function resetGameInterface() {
+    const choices = document.querySelectorAll('.choice');
+    choices.forEach(button => button.disabled = false);
+    document.getElementById('replay').style.display = 'none';
+}
+
+function initializeReplayButton() {
+    const replayButton = document.getElementById('replay');
+    replayButton.removeEventListener('click', handleReplayClick);
+    replayButton.addEventListener('click', handleReplayClick, true);
+}
+
+function updateGameUsername() {
+    var currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
+    if (currentUser && currentUser.username) {
+        var gameUsernameDisplay = document.querySelector('.user-name-game');
+        if (gameUsernameDisplay) {
+            gameUsernameDisplay.textContent = currentUser.username;
+        }
+    }
+}
+
+function showGame() {
+    var gameElement = document.getElementById('game');
+    gameElement.style.display = 'flex';
+    updateGameUsername();
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    const openRpsButton = document.getElementById('open-rps');
+    const rpsOverlay = document.getElementById('rps-overlay');
+    const rpsContainer = document.getElementById('rps-container');
+
+    openRpsButton.addEventListener('click', function () {
+        rpsOverlay.style.display = 'flex';
+    });
+
+    rpsOverlay.addEventListener('click', function (event) {
+        if (event.target === rpsOverlay) {
+            rpsOverlay.style.display = 'none';
+        }
+    });
+
+    rpsContainer.addEventListener('click', function (event) {
+        event.stopPropagation();
+    });
+});
+
+function updateCoins(amount) {
+    var currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
+    if (!currentUser.coins) currentUser.coins = 0;
+    currentUser.coins += amount;
+    sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+    document.getElementById('user-coins').textContent = currentUser.coins;
+    saveUserProgress(currentUser);
+}
+
+function saveUserProgress(user) {
+    var users = JSON.parse(localStorage.getItem('users'));
+    var userIndex = users.findIndex(u => u.email === user.email);
+    if (userIndex !== -1) {
+        users[userIndex] = user;
+        localStorage.setItem('users', JSON.stringify(users));
     }
 }
