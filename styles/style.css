@@ -171,10 +171,11 @@ input {
 }
 
 .news-content {
-    cursor: default;
+    cursor: auto;
     position: fixed;
     top: 110px;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     min-width: 930px;
@@ -184,12 +185,9 @@ input {
     box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
 }
 
-.news-content span,
-.logout-content span,
-.delete-content span,
-.logout-content h1,
-.delete-content h1 {
-    cursor: text;
+.news-content span {
+    padding: 0;
+    margin: 7.5px;
 }
 
 .logout {
