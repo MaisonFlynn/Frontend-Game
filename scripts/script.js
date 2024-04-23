@@ -587,6 +587,7 @@ document.addEventListener('DOMContentLoaded', function () {
     rpsOverlay.addEventListener('click', function (event) {
         if (event.target === rpsOverlay) {
             rpsOverlay.style.display = 'none';
+            resetGame();
         }
     });
 
