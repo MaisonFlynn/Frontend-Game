@@ -512,11 +512,13 @@ function updateScore(result) {
 function endGame() {
     const resultText = document.getElementById('result');
     const choices = document.querySelectorAll('.choice');
+    const currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
+    const username = currentUser ? currentUser.username : 'Player';
 
     choices.forEach(button => button.disabled = true);
 
     if (playerScore === 3) {
-        resultText.textContent = 'Username Wins';
+        resultText.textContent = `${username} Wins`;
         resultText.className = 'result-text result-win';
         updateCoins(1);
     } else {
