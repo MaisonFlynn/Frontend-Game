@@ -18,7 +18,7 @@
             <span>Logo</span>
             <button id="news" onclick="news()">News</button>
             <span id="user-name" style="margin-left: auto; display: none;">Hello, Username</span>
-            <button class="logout" id="logout" style="display: none;" onclick="logoutContainer()">Logout</button>
+            <button id="logout" style="display: none;" onclick="logoutContainer()">Logout</button>
             <!-- Show Logout-Content -->
         </div>
     </div>
@@ -120,9 +120,19 @@
             <div id="game" class="game" styles="display: none;">
                 <!-- Coins -->
                 <h2>Coins <span id="user-coins">0</span></h2>
-                <!-- Name(s) -->
-                <h1>Games</h1>
-                <button id="open-rps">Rock Paper Scissors</button>
+                <!-- Games -->
+                <div class="game-section">
+                    <h1>Games</h1>
+                    <button id="open-rps">Rock Paper Scissors</button>
+                    <button id="open-number-game">Guess Number</button>
+                </div>
+
+                <!-- Shop -->
+                <div class="shop-section">
+                    <h1>Shop</h1>
+                    <button>Under Construction</button>
+                </div>
+
 
                 <!-- Game(s) -->
                 <!-- Rock Paper Scissors -->
@@ -152,6 +162,26 @@
                         </button>
                     </div>
                 </div>
+
+                <!-- Number Game -->
+                <div id="number-game-overlay" class="game-overlay" style="display: none;">
+                    <div id="number-game-container" class="num-container">
+                        <h1>Guess Number</h1>
+                        <span>Chances <span id="number-guess-chances">6</span></span>
+                        <form id="number-game-form" onsubmit="return checkNumberGuess();">
+                            <div class="input-guess-container">
+                                <input type="text" id="number-guess-input" placeholder="1 · 100" class="input-style"
+                                    autocomplete="off">
+                                <button id="guess-button" onclick="checkNumberGuess()"
+                                    class="guess-button">Guess</button>
+                            </div>
+                        </form>
+                        <span id="number-guess-feedback">Input Number</span>
+                        <button id="number-replay-button" onclick="restartNumberGame()" class="replay"
+                            style="display: none">Replay</button>
+                    </div>
+                </div>
+
             </div>
         </div>
 
