@@ -22,31 +22,30 @@ if (!localStorage.getItem('users')) {
 }
 
 // Test User
-document.addEventListener('DOMContentLoaded', function () {
-    initializeTestUser();
-});
-
 function initializeTestUser() {
     // Credentials
     var testUser = {
         username: 'Test',
         email: 'Test',
-        password: 'Test'
+        password: 'Test',
+        coins: 100
     };
 
+    var users = JSON.parse(localStorage.getItem('users') || '[]');
+    var existingUser = users.find(user => user.email === testUser.email);
 
-    if (!localStorage.getItem('users')) {
-        localStorage.setItem('users', JSON.stringify([testUser]));
+    if (!existingUser) {
+        users.push(testUser);
+        localStorage.setItem('users', JSON.stringify(users));
     } else {
-        var users = JSON.parse(localStorage.getItem('users'));
-
-        var exists = users.some(user => user.email === testUser.email);
-        if (!exists) {
-            users.push(testUser);
-            localStorage.setItem('users', JSON.stringify(users));
-        }
+        existingUser.coins = 100; // Always 100 Coins
+        localStorage.setItem('users', JSON.stringify(users));
     }
 }
+
+document.addEventListener('DOMContentLoaded', function () {
+    initializeTestUser();
+});
 
 // Login Function
 function login(event) {
@@ -92,6 +91,7 @@ function login(event) {
             container.style.display = 'none';
             updateUsernameDisplay();
             updateGameUsername();
+            applyColorTheme(user.lastColor || 'default');
             clear();
         }, 1000);
     } else {
@@ -238,6 +238,7 @@ function logout() {
         opacity.style.display = 'none';
         clear();
         view();
+        applyColorTheme('default');
     }, 1000);
 
     // Reset Show Password Checkboxes & Password Field Types
@@ -254,6 +255,7 @@ function logout() {
     confirmPasswordInput.type = 'password';
 
     sessionStorage.removeItem('currentUser');
+    toggleUIOnLogin(false);
 }
 
 // Clear Form(s) Function
@@ -701,3 +703,61 @@ document.addEventListener('DOMContentLoaded', function () {
 
     initializeNumberGame();
 });
+
+/* Theme(s) */
+const themes = {
+    red: 'red-theme',
+    green: 'green-theme',
+    blue: 'blue-theme',
+    default: 'default-theme'
+};
+
+function applyColorTheme(color) {
+    const themeClass = themes[color] || themes.default;
+    const elementsToColor = document.querySelectorAll('html, body, .header, .advertisement, .screen');
+
+    elementsToColor.forEach(elem => {
+        Object.values(themes).forEach(theme => {
+            elem.classList.remove(theme);
+        });
+
+        elem.classList.add(themeClass);
+    });
+}
+
+function changeColor(color, cost) {
+    var currentUser = getCurrentUser();
+
+    if (currentUser.coins >= cost) {
+        currentUser.coins -= cost;
+        sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+        updateUserInfoDisplays();
+        applyColorTheme(color);
+        currentUser.lastColor = color;
+        saveUserProgress(currentUser);
+    }
+}
+
+function restoreUserColor() {
+    const currentUser = getCurrentUser();
+    if (currentUser && currentUser.lastColor) {
+        applyColorTheme(currentUser.lastColor);
+    } else {
+        applyColorTheme('default');
+    }
+}
+
+function getCurrentUser() {
+    return JSON.parse(sessionStorage.getItem('currentUser'));
+}
+
+function updateUserInfoDisplays() {
+    const currentUser = getCurrentUser();
+    const userNameDisplays = document.querySelectorAll('#user-name, .user-name-game');
+    const userCoinsDisplay = document.getElementById('user-coins');
+
+    if (currentUser) {
+        userNameDisplays.forEach(display => display.textContent = `Hello, ${currentUser.username}`);
+        userCoinsDisplay.textContent = currentUser.coins || 0;
+    }
+}
