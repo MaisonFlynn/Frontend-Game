@@ -615,3 +615,89 @@ function saveUserProgress(user) {
         localStorage.setItem('users', JSON.stringify(users));
     }
 }
+
+// Number Game
+function checkNumberGuess() {
+    event.preventDefault();
+    const guessInput = document.getElementById('number-guess-input');
+    const userGuess = parseInt(guessInput.value);
+    const feedbackText = document.getElementById('number-guess-feedback');
+    const chancesDisplay = document.getElementById('number-guess-chances');
+
+    if (isNaN(userGuess) || userGuess < 1 || userGuess > 100) {
+        feedbackText.innerText = 'Invalid Input';
+        feedbackText.style.color = 'red';
+        return false;
+    }
+
+    chancesLeft--;
+    chancesDisplay.innerText = chancesLeft;
+
+    if (userGuess === secretNumber) {
+        feedbackText.innerText = 'Win';
+        feedbackText.style.color = 'green';
+        updateCoins(1);
+        endNumberGame();
+    } else if (chancesLeft <= 0) {
+        feedbackText.innerText = 'Lose, Number ' + secretNumber;
+        feedbackText.style.color = 'red';
+        endNumberGame();
+    } else {
+        feedbackText.innerText = userGuess > secretNumber ? 'Lower' : 'Higher';
+        feedbackText.style.color = 'orange';
+    }
+    return false;
+}
+
+function endNumberGame() {
+    document.getElementById('number-replay-button').style.display = 'block';
+    document.getElementById('number-guess-input').disabled = true;
+    document.getElementById('guess-button').disabled = true;
+}
+
+function restartNumberGame() {
+    secretNumber = Math.floor(Math.random() * 100) + 1;
+    chancesLeft = 6;
+
+    const numberInput = document.getElementById('number-guess-input');
+    const guessButton = document.getElementById('guess-button');
+    const feedbackText = document.getElementById('number-guess-feedback');
+    const chancesDisplay = document.getElementById('number-guess-chances');
+
+    chancesDisplay.innerText = chancesLeft;
+    feedbackText.innerText = 'Enter Number';
+    feedbackText.style.color = 'black';
+    numberInput.value = '';
+    numberInput.disabled = false;
+    guessButton.disabled = false;
+    document.getElementById('number-replay-button').style.display = 'none';
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    initializeNumberGame();
+});
+
+function initializeNumberGame() {
+    secretNumber = Math.floor(Math.random() * 100) + 1;
+    chancesLeft = 6;
+    document.getElementById('number-guess-chances').innerText = chancesLeft;
+}
+
+// Close Guess Number
+document.addEventListener('DOMContentLoaded', function () {
+    const openNumberGameBtn = document.getElementById('open-number-game');
+    const numberGameOverlay = document.getElementById('number-game-overlay');
+
+    openNumberGameBtn.addEventListener('click', function () {
+        numberGameOverlay.style.display = numberGameOverlay.style.display === 'none' ? 'flex' : 'none';
+    });
+
+    numberGameOverlay.addEventListener('click', function (event) {
+        if (event.target === numberGameOverlay) {
+            numberGameOverlay.style.display = 'none';
+            restartNumberGame();
+        }
+    });
+
+    initializeNumberGame();
+});
