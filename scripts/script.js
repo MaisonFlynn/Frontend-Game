@@ -28,7 +28,7 @@ function initializeTestUser() {
         username: 'Test',
         email: 'Test',
         password: 'Test',
-        coins: 100
+        coins: 1000
     };
 
     var users = JSON.parse(localStorage.getItem('users') || '[]');
@@ -38,7 +38,7 @@ function initializeTestUser() {
         users.push(testUser);
         localStorage.setItem('users', JSON.stringify(users));
     } else {
-        existingUser.coins = 100; // Always 100 Coins
+        existingUser.coins = 1000; // Always 1000 Coins
         localStorage.setItem('users', JSON.stringify(users));
     }
 }
@@ -92,6 +92,7 @@ function login(event) {
             updateUsernameDisplay();
             updateGameUsername();
             applyColorTheme(user.lastColor || 'default');
+            updateThemeButtonVisibility();
             clear();
         }, 1000);
     } else {
@@ -607,6 +608,7 @@ function updateCoins(amount) {
     sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
     document.getElementById('user-coins').textContent = currentUser.coins;
     saveUserProgress(currentUser);
+    updateUserInfoDisplays();
 }
 
 function saveUserProgress(user) {
@@ -706,9 +708,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
 /* Theme(s) */
 const themes = {
-    red: 'red-theme',
+    red: 'red-theme', // Basic(s)
     green: 'green-theme',
     blue: 'blue-theme',
+    brown: 'brown-theme', // Secret(s)
+    pink: 'pink-theme',
+    gold: 'gold-theme',
+    diamond: 'diamond-theme',
     default: 'default-theme'
 };
 
@@ -759,5 +765,33 @@ function updateUserInfoDisplays() {
     if (currentUser) {
         userNameDisplays.forEach(display => display.textContent = `Hello, ${currentUser.username}`);
         userCoinsDisplay.textContent = currentUser.coins || 0;
+        updateThemeButtonVisibility();
     }
 }
+
+/* Secret Theme(s) */
+function updateThemeButtonVisibility() {
+    const currentUser = getCurrentUser();
+    const brownButton = document.getElementById('brown-theme-btn');
+    const pinkButton = document.getElementById('pink-theme-btn');
+    const goldButton = document.getElementById('gold-theme-btn');
+    const diamondButton = document.getElementById('diamond-theme-btn');
+
+    if (!currentUser) {
+        brownButton.style.display = 'none';
+        pinkButton.style.display = 'none';
+        goldButton.style.display = 'none';
+        diamondButton.style.display = 'none';
+        return;
+    }
+
+    // Coin Limit(s)
+    brownButton.style.display = currentUser.coins >= 14 ? 'block' : 'none';
+    pinkButton.style.display = currentUser.coins >= 22 ? 'block' : 'none';
+    goldButton.style.display = currentUser.coins >= 50 ? 'block' : 'none';
+    diamondButton.style.display = currentUser.coins >= 100 ? 'block' : 'none';
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    updateThemeButtonVisibility();
+});
