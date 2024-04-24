@@ -506,3 +506,28 @@ h2,
     flex-direction: column;
     align-items: center;
 }
+
+/* Theme(s) */
+.red-theme,
+.red-theme body,
+.red-theme .header,
+.red-theme .advertisement,
+.red-theme .screen {
+    background-color: #FFE5E3;
+}
+
+.green-theme,
+.green-theme body,
+.green-theme .header,
+.green-theme .advertisement,
+.green-theme .screen {
+    background-color: #DFF2DC
+}
+
+.blue-theme,
+.blue-theme body,
+.blue-theme .header,
+.blue-theme .advertisement,
+.blue-theme .screen {
+    background-color: #ECF5FD;
+}
