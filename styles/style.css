@@ -507,13 +507,13 @@ h2,
     align-items: center;
 }
 
-/* Theme(s) */
+/* Basic Theme(s) */
 .red-theme,
 .red-theme body,
 .red-theme .header,
 .red-theme .advertisement,
 .red-theme .screen {
-    background-color: #FFE5E3;
+    background-color: #FFB3B3;
 }
 
 .green-theme,
@@ -521,7 +521,7 @@ h2,
 .green-theme .header,
 .green-theme .advertisement,
 .green-theme .screen {
-    background-color: #DFF2DC
+    background-color: #C4E1CC;
 }
 
 .blue-theme,
@@ -529,5 +529,38 @@ h2,
 .blue-theme .header,
 .blue-theme .advertisement,
 .blue-theme .screen {
-    background-color: #DCEFFD;
+    background-color: #B8DBF2;
+}
+
+/* Secret Theme(s) */
+.brown-theme,
+.brown-theme body,
+.brown-theme .header,
+.brown-theme .advertisement,
+.brown-theme .screen {
+    background-color: #E5C8A8;
+}
+
+.pink-theme,
+.pink-theme body,
+.pink-theme .header,
+.pink-theme .advertisement,
+.pink-theme .screen {
+    background-color: #FFA6C9;
+}
+
+.gold-theme,
+.gold-theme body,
+.gold-theme .header,
+.gold-theme .advertisement,
+.gold-theme .screen {
+    background-color: #E6BE8A;
+}
+
+.diamond-theme,
+.diamond-theme body,
+.diamond-theme .header,
+.diamond-theme .advertisement,
+.diamond-theme .screen {
+    background-color: #E0FFFF;
 }
