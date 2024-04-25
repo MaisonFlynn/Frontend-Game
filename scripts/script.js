@@ -256,6 +256,7 @@ function logout() {
     confirmPasswordInput.type = 'password';
 
     sessionStorage.removeItem('currentUser');
+    updateSparkleVisibility();
     toggleUIOnLogin(false);
 }
 
@@ -729,6 +730,13 @@ function applyColorTheme(color) {
 
         elem.classList.add(themeClass);
     });
+
+    var currentUser = getCurrentUser();
+    if (currentUser) {
+        currentUser.lastColor = color;
+        sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+    }
+    updateSparkleVisibility();
 }
 
 function changeColor(color, cost) {
@@ -786,12 +794,78 @@ function updateThemeButtonVisibility() {
     }
 
     // Coin Limit(s)
-    brownButton.style.display = currentUser.coins >= 14 ? 'block' : 'none';
-    pinkButton.style.display = currentUser.coins >= 22 ? 'block' : 'none';
-    goldButton.style.display = currentUser.coins >= 50 ? 'block' : 'none';
-    diamondButton.style.display = currentUser.coins >= 100 ? 'block' : 'none';
+    brownButton.style.display = currentUser.coins >= 5 ? 'block' : 'none';
+    pinkButton.style.display = currentUser.coins >= 10 ? 'block' : 'none';
+    goldButton.style.display = currentUser.coins >= 15 ? 'block' : 'none';
+    diamondButton.style.display = currentUser.coins >= 20 ? 'block' : 'none';
 }
 
 document.addEventListener('DOMContentLoaded', function () {
     updateThemeButtonVisibility();
+});
+
+/* Sparkle(s) */
+document.querySelectorAll('.sparkle').forEach(sparkle => {
+    // Random Position
+    sparkle.style.setProperty('--random-horizontal', Math.random().toString());
+    sparkle.style.setProperty('--random-vertical', Math.random().toString());
+
+    // Randomize Size
+    let size = Math.random() * 1.5 + 1; // Sizes between 1em and 2.5em
+    sparkle.style.setProperty('--size', `${size}em`);
+
+    // Randomize Animation Duration & Delay
+    let duration = Math.random() * 4 + 3; // Duration Between 3 & 7 Seconds
+    let delay = Math.random() * 5; // Delay Between 0 & 5 Seconds
+    sparkle.style.setProperty('--duration', `${duration}s`);
+    sparkle.style.setProperty('--delay', `${delay}s`);
+
+    // Random Child Sparkle(s)
+    const addChildren = (count, className) => {
+        for (let i = 0; i < count; i++) {
+            let child = document.createElement('div');
+            child.className = className;
+            child.style.cssText = `
+                position: absolute;
+                background: #fff;
+                box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
+                top: ${Math.random() * size - (size / 2)}em;
+                left: ${Math.random() * size - (size / 2)}em;
+                width: ${Math.random() * 0.5 + 0.5}em; // Between 0.5em and 1em
+                height: ${Math.random() * 0.5 + 0.5}em; // Between 0.5em and 1em
+                border-radius: 0.3em;
+            `;
+            sparkle.appendChild(child);
+        }
+    }
+
+    let beforeCount = Math.floor(Math.random() * 4); // Maximum 3 Children
+    let afterCount = Math.floor(Math.random() * 4); // Maximum 3 Children
+
+    addChildren(beforeCount, 'sparkle-before');
+    addChildren(afterCount, 'sparkle-after');
+});
+
+function updateSparkleVisibility() {
+    const currentUser = getCurrentUser();
+    const sparkleElements = document.querySelectorAll('.sparkle');
+
+    // Check Theme
+    let displayStyle = 'none';
+    if (currentUser && (currentUser.lastColor === 'gold' || currentUser.lastColor === 'diamond')) {
+        displayStyle = 'block';
+    }
+
+    sparkleElements.forEach(sparkle => {
+        sparkle.style.display = displayStyle;
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    applyColorTheme('default');
+
+    var currentUser = getCurrentUser();
+    if (currentUser) {
+        updateUserInfoDisplays();
+    }
 });
