@@ -8,6 +8,7 @@ html {
     padding: 0;
     font-family: 'Fredoka';
     background-color: #fff;
+    position: relative;
 }
 
 .header {
@@ -62,6 +63,7 @@ html {
     background-color: #fff;
     /* 3D */
     perspective: 4000px;
+    z-index: 2;
 }
 
 .container {
@@ -157,7 +159,7 @@ input {
 }
 
 .news-container {
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
@@ -563,4 +565,85 @@ h2,
 .diamond-theme .advertisement,
 .diamond-theme .screen {
     background-color: #E0FFFF;
+}
+
+/* Sparkle(s) */
+.background-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.sparkle {
+    display: none;
+    background: #fff;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
+    height: var(--size);
+    width: var(--size);
+    border-radius: .5em;
+    transform: rotate(45deg);
+    position: absolute;
+    animation: fadeIn 2s ease forwards, fadeInOut var(--duration) var(--delay) infinite ease-in-out, scaleInOut var(--duration) var(--delay) infinite ease-in-out;
+    left: calc(100% * var(--random-horizontal));
+    top: calc(100% * var(--random-vertical));
+}
+
+.sparkle::before,
+.sparkle::after {
+    content: '';
+    position: absolute;
+    background: inherit;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
+    top: -.5em;
+    right: -1.5em;
+    height: 1em;
+    width: 1em;
+    border-radius: .3em;
+}
+
+.sparkle::after {
+    top: 1.2em;
+    right: -1.3em;
+    height: .6em;
+    width: .6em;
+    border-radius: .2em;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeInOut {
+
+    0%,
+    100% {
+        opacity: 0;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
+@keyframes scaleInOut {
+
+    0%,
+    100% {
+        transform: scale(0.5) rotate(45deg);
+    }
+
+    50% {
+        transform: scale(1.1) rotate(45deg);
+    }
 }
