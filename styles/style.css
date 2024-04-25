@@ -513,59 +513,38 @@ h2,
 
 /* Basic Theme(s) */
 .red-theme,
-.red-theme body,
-.red-theme .header,
-.red-theme .advertisement,
-.red-theme .screen {
+.red-theme body {
     background-color: #FFB3B3;
 }
 
 .green-theme,
-.green-theme body,
-.green-theme .header,
-.green-theme .advertisement,
-.green-theme .screen {
+.green-theme body {
     background-color: #C4E1CC;
 }
 
 .blue-theme,
-.blue-theme body,
-.blue-theme .header,
-.blue-theme .advertisement,
-.blue-theme .screen {
+.blue-theme body {
     background-color: #B8DBF2;
 }
 
 /* Secret Theme(s) */
 .brown-theme,
-.brown-theme body,
-.brown-theme .header,
-.brown-theme .advertisement,
-.brown-theme .screen {
+.brown-theme body {
     background-color: #E5C8A8;
 }
 
 .pink-theme,
-.pink-theme body,
-.pink-theme .header,
-.pink-theme .advertisement,
-.pink-theme .screen {
+.pink-theme body {
     background-color: #FFA6C9;
 }
 
 .gold-theme,
-.gold-theme body,
-.gold-theme .header,
-.gold-theme .advertisement,
-.gold-theme .screen {
+.gold-theme body {
     background-color: #E6BE8A;
 }
 
 .diamond-theme,
-.diamond-theme body,
-.diamond-theme .header,
-.diamond-theme .advertisement,
-.diamond-theme .screen {
+.diamond-theme body {
     background-color: #E0FFFF;
 }
 
