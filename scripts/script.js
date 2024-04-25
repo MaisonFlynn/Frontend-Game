@@ -821,3 +821,7 @@ function addStar() {
 }
 
 setInterval(addStar, 50);
+
+window.onload = function () {
+    logout();
+};
