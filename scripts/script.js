@@ -1,827 +1,583 @@
-/* Flip Between Login & Register */
-function front() {
-    var flip = document.getElementById('container');
-    if (!flip.style.transform.includes("180deg")) {
-        flip.style.transform = "translateX(-100%) rotateY(180deg)";
-    }
+* {
+    box-sizing: border-box;
 }
 
-function back() {
-    var flip = document.getElementById('container');
-    if (flip.style.transform.includes("180deg")) {
-        flip.style.transform = "translateX(0%) rotateY(0deg)";
-    }
+body,
+html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Fredoka';
+    background-color: #fff;
+    position: relative;
 }
 
-// Hide Game
-document.getElementById('game').style.display = 'none';
-
-// Simulate User Authentication
-if (!localStorage.getItem('users')) {
-    localStorage.setItem('users', JSON.stringify([]));
+.header {
+    position: relative;
+    z-index: 1;
+    min-width: 1310px;
+    min-height: 80px;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
+    display: flex;
+    justify-content: center;
+    background-color: #fff;
 }
 
-// Test User
-function initializeTestUser() {
-    // Credentials
-    var testUser = {
-        username: 'Test',
-        email: 'Test',
-        password: 'Test',
-        coins: 1000
-    };
-
-    var users = JSON.parse(localStorage.getItem('users') || '[]');
-    var existingUser = users.find(user => user.email === testUser.email);
-
-    if (!existingUser) {
-        users.push(testUser);
-        localStorage.setItem('users', JSON.stringify(users));
-    } else {
-        existingUser.coins = 1000; // Always 1000 Coins
-        localStorage.setItem('users', JSON.stringify(users));
-    }
+.header-content {
+    min-width: 1310px;
+    min-height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    gap: 30px;
 }
 
-document.addEventListener('DOMContentLoaded', function () {
-    initializeTestUser();
-});
-
-// Login Function
-function login(event) {
-    event.preventDefault();
-
-    var email = document.getElementById('login-email').value;
-    var password = document.getElementById('login-password').value;
-    var errorLogin = document.getElementById('error-login');
-    var loginSuccess = document.getElementById('login-success');
-    var logoutButton = document.getElementById('logout');
-    var userNameDisplay = document.getElementById('user-name');
-    var container = document.getElementById('container');
-    var game = document.getElementById('game');
-    var logoutSuccess = document.getElementById('logout-success');
-
-    game.style.display = 'none'; // Hide Game
-    logoutSuccess.style.display = 'none';
-
-    // Check IF Empty
-    if (!email || !password) {
-        errorLogin.textContent = 'Empty Field(s)';
-        return false;
-    }
-
-    // Clear Error(s)
-    errorLogin.textContent = '';
-    loginSuccess.textContent = '';
-
-    // Check Credentials
-    var users = JSON.parse(localStorage.getItem('users'));
-    var user = users.find(user => user.email === email && user.password === password);
-
-    if (user) {
-        loginSuccess.textContent = 'Login Successful';
-        sessionStorage.setItem('currentUser', JSON.stringify(user));
-        updateUsernameDisplay();
-        // Delay
-        setTimeout(function () {
-            logoutButton.style.display = 'block'; // Show Logout Button
-            userNameDisplay.textContent = `Hello, ${user.username}`; // Show Username
-            userNameDisplay.style.display = 'block';
-            game.style.display = 'flex';
-            container.style.display = 'none';
-            updateUsernameDisplay();
-            updateGameUsername();
-            applyColorTheme(user.lastColor || 'default');
-            updateThemeButtonVisibility();
-            clear();
-        }, 1000);
-    } else {
-        errorLogin.textContent = "Invalid Credential(s)";
-        return false;
-    }
-
-    return false;
+.main {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    margin: 30px 0;
+    border-radius: 15px;
 }
 
-// Function TO Fill Login & Submit
-function performLogin(email, password) {
-    // Set Values IN Login
-    document.getElementById('login-email').value = email;
-    document.getElementById('login-password').value = password;
+.advertisement {
+    min-width: 160px;
+    min-height: 600px;
+    border-radius: 15px;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
 
-    // Submit
-    var loginButton = document.querySelector('#login-form button.confirm');
-    loginButton.click();
+    /* Temporary */
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #fff;
+    z-index: 1;
 }
 
-// Register Function
-function register() {
-    var users = JSON.parse(localStorage.getItem('users'));
-    var newUser = {
-        username: document.getElementById('username').value,
-        email: document.getElementById('email').value,
-        password: document.getElementById('password').value
-    };
-
-    var username = document.getElementById('username').value;
-    var email = document.getElementById('email').value;
-    var password = document.getElementById('password').value;
-    var confirmPassword = document.getElementById('confirm-password').value;
-    var errorUsername = document.getElementById('error-username');
-    var errorEmail = document.getElementById('error-email');
-    var errorPassword = document.getElementById('error-password');
-    var registerSuccess = document.getElementById('register-success');
-
-    // Clear Error(s)
-    registerSuccess.textContent = '';
-    errorUsername.textContent = '';
-    errorEmail.textContent = '';
-    errorPassword.textContent = '';
-
-    // Check Existing User
-    var existingUsernames = users.map(user => user.username);
-    var existingEmails = users.map(user => user.email);
-
-    // Check IF Empty
-    if (!username || !email || !password || !confirmPassword) {
-        errorPassword.textContent = 'Empty Field(s)';
-        return false;
-    }
-
-    // Validate Username
-    if (username.length < 3 || username.length > 10 || /^\d/.test(username) || /\s/.test(username) || /[^a-zA-Z0-9]/.test(username)) {
-        errorUsername.textContent = "Invalid Username";
-        return false;
-    }
-
-    // Validate Username Existance
-    if (existingUsernames.includes(username)) {
-        errorUsername.textContent = 'Username Exists';
-        return false;
-    }
-
-    // Validate Email
-    if (existingEmails.includes(email)) {
-        errorEmail.textContent = 'Email Exists';
-        return false;
-    } else if (!/\S+@\S+\.\S+/.test(email)) {
-        errorEmail.textContent = 'Invalid Email';
-        return false;
-    }
-
-    // Validate Password Strength
-    if (password.length < 8 || !/[A-Z]/.test(password) || !/[a-z]/.test(password) || !/[0-9]/.test(password) || !/[^A-Za-z0-9]/.test(password)) {
-        errorPassword.textContent = 'Invalid Password';
-        return false;
-    } else if (password !== confirmPassword) {
-        errorPassword.textContent = "Passwords DON'T Match";
-        return false;
-    }
-
-    // IF Valid Login
-    users.push(newUser);
-    localStorage.setItem('users', JSON.stringify(users));
-    performLogin(newUser.email, newUser.password);
-    registerSuccess.textContent = 'Registration Successful';
-    clear();
-    performLogin(newUser.email, newUser.password);
-
-    return false;
+.screen {
+    min-width: 930px;
+    min-height: 600px;
+    margin: 0 30px;
+    position: relative;
+    border-radius: 15px;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
+    display: flex;
+    background-color: #fff;
+    /* 3D */
+    perspective: 4000px;
+    z-index: 2;
 }
 
-// Store User Progress
-function storeUserProgress(userId, progressData) {
-    var users = JSON.parse(localStorage.getItem('users'));
-    var user = users.find(user => user.id === userId);
-    user.progress = progressData;
-    localStorage.setItem('users', JSON.stringify(users));
+.container {
+    position: absolute;
+    right: 0;
+    width: 465px;
+    height: 600px;
+    transition: transform 1s ease-in-out;
+    transform-style: preserve-3d;
 }
 
-// Load User Progress
-function loadUserProgress(userId) {
-    var users = JSON.parse(localStorage.getItem('users'));
-    var user = users.find(user => user.id === userId);
-    return user.progress;
+.login,
+.register {
+    background-color: #fff;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: 15px;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
+
+    /* Temporary */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
-// Perform Login
-function performLogin(email, password) {
-    document.getElementById('login-email').value = email;
-    document.getElementById('login-password').value = password;
-    login({ preventDefault: () => { } });
+.register {
+    /* Hide */
+    transform: rotateY(180deg);
 }
 
-// Logout Function
-function logout() {
-    document.getElementById('logout-success').style.display = 'block'; // Show
-
-    var logoutSuccess = document.getElementById('logout-success');
-    var loginSuccess = document.getElementById('login-success');
-    var registerSuccess = document.getElementById('register-success');
-    var logoutButton = document.getElementById('logout');
-    var userNameDisplay = document.getElementById('user-name');
-    var container = document.getElementById('container');
-    var game = document.getElementById('game');
-    var opacity = document.getElementById('opacity');
-
-    logoutSuccess.style.display = 'block';
-    logoutSuccess.textContent = 'Logout Successful';
-    loginSuccess.textContent = '';
-    registerSuccess.textContent = '';
-
-    // Reset Login Status
-    setTimeout(function () {
-        logoutButton.style.display = 'none'; // Hide Logout Button
-        userNameDisplay.style.display = 'none'; // Hide Username
-        container.style.display = 'flex'; // Show Container
-        game.style.display = 'none'; // Hide Game
-        document.querySelector('.logout-container').style.display = 'none'; // Hide Logout
-        opacity.style.display = 'none';
-        clear();
-        view();
-        applyColorTheme('default');
-    }, 1000);
-
-    // Reset Show Password Checkboxes & Password Field Types
-    var loginShowPasswordCheckbox = document.getElementById('login-show-password');
-    var showPasswordCheckbox = document.getElementById('show-password');
-    var loginPasswordInput = document.getElementById('login-password');
-    var passwordInput = document.getElementById('password');
-    var confirmPasswordInput = document.getElementById('confirm-password');
-
-    loginShowPasswordCheckbox.checked = false;
-    showPasswordCheckbox.checked = false;
-    loginPasswordInput.type = 'password';
-    passwordInput.type = 'password';
-    confirmPasswordInput.type = 'password';
-
-    sessionStorage.removeItem('currentUser');
-    toggleUIOnLogin(false);
+button,
+input {
+    background: none;
+    color: inherit;
+    border: none;
+    padding: 0;
+    font: inherit;
+    cursor: pointer;
+    outline: inherit;
+    display: block;
 }
 
-// Clear Form(s) Function
-function clear() {
-    // Login Fields
-    document.getElementById('login-email').value = '';
-    document.getElementById('login-password').value = '';
-    document.getElementById('error-login').textContent = '';
-
-    // Registration Fields
-    document.getElementById('username').value = '';
-    document.getElementById('email').value = '';
-    document.getElementById('password').value = '';
-    document.getElementById('confirm-password').value = '';
-    document.getElementById('error-username').textContent = '';
-    document.getElementById('error-email').textContent = '';
-    document.getElementById('error-password').textContent = '';
+h1,
+h2 {
+    padding: 0;
+    margin: 15px;
+    /* Temporary */
+    font-weight: normal;
 }
 
-// Reset View
-function view() {
-    var container = document.getElementById('container');
-    if (container.style.transform.includes("180deg")) {
-        container.style.transform = "translateX(0%) rotateY(0deg)";
-    }
-
-    clear();
+input {
+    width: 80%;
+    margin: 15px;
+    padding: 15px;
+    border-radius: 15px;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
 }
 
-// News "Popup"
-function news() {
-    var popup = document.getElementById('news-container');
-    popup.style.display = popup.style.display === 'none' ? 'flex' : 'none';
-    if (popup.style.display === 'flex') {
-        document.addEventListener('click', close, true);
-    }
+.container span {
+    width: 75%;
 }
 
-// Close News "Popup" 
-function close(event) {
-    var popupContent = document.querySelector('.news-content');
-    if (!popupContent.contains(event.target)) {
-        document.getElementById('news-container').style.display = 'none';
-        document.removeEventListener('click', close, true);
-    }
+.button-container {
+    display: flex;
+    gap: 30px;
+    width: 80%;
+    padding: 15px 0;
 }
 
-// Show Password
-function togglePasswordVisibility(passwordId, confirmPasswordId) {
-    var passwordInput = document.getElementById(passwordId);
-    if (passwordInput.type === "password") {
-        passwordInput.type = "text";
-    } else {
-        passwordInput.type = "password";
-    }
-
-    // Show Confirm Password
-    if (confirmPasswordId) {
-        var confirmPasswordInput = document.getElementById(confirmPasswordId);
-        if (confirmPasswordInput.type === "password") {
-            confirmPasswordInput.type = "text";
-        } else {
-            confirmPasswordInput.type = "password";
-        }
-    }
+.login button,
+.register button {
+    width: 50%;
+    padding: 15px;
+    border-radius: 15px;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
 }
 
-// Clear ALL Storage
-function clearAllStorage() {
-
-    document.getElementById('delete-success').style.display = 'block'; // Show
-
-    // Clear Local Storage
-    localStorage.clear();
-
-    // Clear Session Storage
-    sessionStorage.clear();
-
-    // Clear Cookies
-    document.cookie.split(";").forEach(function (c) {
-        document.cookie = c.trim().split("=")[0] + '=;expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/';
-    });
-
-    // Hide Logout
-    setTimeout(function () {
-        document.querySelector('.logout-container').style.display = 'none'; // Hide the logout container
-    }, 1000);
-    logout();
-    clear();
+.confirm {
+    color: #fff;
+    transition: background-color 0.3s ease;
+    background-color: #A5D6A7;
 }
 
-function forwards() {
-    var flip = document.getElementById('logout-container');
-    if (!flip.style.transform.includes("180deg")) {
-        flip.style.transform = "rotateY(180deg)";
-    }
+.confirm:hover {
+    background-color: #81C784;
 }
 
-function backwards() {
-    var flip = document.getElementById('logout-container');
-    if (flip.style.transform.includes("180deg")) {
-        flip.style.transform = "rotateY(0deg)";
-    }
+.confirm:active {
+    background-color: #66BB6A;
 }
 
-function logoutContainer() {
-    var popup = document.getElementById('logout-container');
-    var header = document.querySelector('.header');
-
-    if (popup.style.display === 'none') {
-        popup.style.display = 'flex';
-        popup.classList.add('active');
-        header.style.pointerEvents = 'none';
-        document.addEventListener('click', closeLogout, true);
-    } else {
-        closeLogout();
-    }
+.news-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+    background-color: rgba(0, 0, 0, 0.25);
+    cursor: pointer;
 }
 
-function logoutContainer() {
-    var opacity = document.getElementById('opacity');
-    var logoutContainer = document.getElementById('logout-container');
-    var header = document.querySelector('.header');
-
-    if (logoutContainer.style.display === 'none') {
-        opacity.style.display = 'flex';
-        logoutContainer.style.display = 'flex';
-        header.style.pointerEvents = 'none';
-        displayAllUsers();
-        document.addEventListener('click', closeLogout, true);
-    } else {
-        closeLogout();
-    }
+.news-content {
+    cursor: auto;
+    position: fixed;
+    top: 110px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-width: 930px;
+    min-height: 600px;
+    background-color: #fff;
+    border-radius: 15px;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
 }
 
-function closeLogout(event) {
-    var opacity = document.getElementById('opacity');
-    var logoutContainer = document.getElementById('logout-container');
-    var header = document.querySelector('.header');
-    var flip = document.getElementById('logout-container');
-
-
-    if (event) {
-        var popupContentLogout = document.querySelector('.logout-content');
-        var popupContentDelete = document.querySelector('.delete-content');
-        if (!popupContentLogout.contains(event.target) && !popupContentDelete.contains(event.target)) {
-            opacity.style.display = 'none';
-            logoutContainer.style.display = 'none';
-            header.style.pointerEvents = 'auto';
-            flip.style.transform = "rotateY(0deg)";
-            document.removeEventListener('click', closeLogout, true);
-        }
-    } else {
-        opacity.style.display = 'none';
-        logoutContainer.style.display = 'none';
-        header.style.pointerEvents = 'auto';
-        flip.style.transform = "rotateY(0deg)";
-        document.removeEventListener('click', closeLogout, true);
-    }
+.news-content span,
+.news-content h1 {
+    padding: 0;
+    margin: 7.5px;
 }
 
-function updateUsernameDisplay() {
-    var currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
-    if (currentUser && currentUser.username) {
-        var userGreetingSpans = document.querySelectorAll('#user-greeting');
-        userGreetingSpans.forEach(span => {
-            span.textContent = `Bye, ${currentUser.username}`;
-        });
-        var userNameDisplays = document.querySelectorAll('#user-name, .user-name-game'); // Update all relevant username displays
-        userNameDisplays.forEach(display => {
-            display.textContent = `Hello, ${currentUser.username}`;
-            document.getElementById('user-coins').textContent = currentUser.coins || 0;
-        });
-    }
+form {
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
-function displayAllUsers() {
-    var allUsersContainer = document.getElementById('all-users');
-    var users = JSON.parse(localStorage.getItem('users'));
-    if (users && users.length > 0) {
-        var usernames = users.map(user => user.username);
-        var formattedUsernames = '';
-        if (usernames.length > 1) {
-
-            formattedUsernames = usernames.slice(0, -1).join(', ') + ' & ' + usernames[usernames.length - 1];
-        } else {
-
-            formattedUsernames = usernames[0];
-        }
-        allUsersContainer.textContent = 'Bye, ' + formattedUsernames;
-    } else {
-        allUsersContainer.textContent = 'NO User(s)';
-    }
+*:focus {
+    outline: none;
+    border: none;
 }
 
-/* Rock Papper Scissors */
-let playerScore = 0;
-let cpuScore = 0;
-
-document.addEventListener('DOMContentLoaded', function () {
-    document.querySelectorAll('.choice').forEach((button) => {
-        button.addEventListener('click', function () {
-            const playerChoice = this.id;
-            const cpuChoice = getCpuChoice();
-            const result = determineWinner(playerChoice, cpuChoice);
-            updateScore(result);
-            if (playerScore === 3 || cpuScore === 3) {
-                endGame();
-            }
-        });
-    });
-    initializeReplayButton();
-});
-
-function getCpuChoice() {
-    const choices = ['rock', 'paper', 'scissors'];
-    return choices[Math.floor(Math.random() * 3)];
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: 75%;
 }
 
-function determineWinner(player, cpu) {
-    if (player === cpu) {
-        return 'draw';
-    } else if (
-        (player === 'rock' && cpu === 'scissors') ||
-        (player === 'paper' && cpu === 'rock') ||
-        (player === 'scissors' && cpu === 'paper')
-    ) {
-        return 'player';
-    } else {
-        return 'cpu';
-    }
+input[type="checkbox"] {
+    margin: 0;
+    margin-right: 7.5px;
+    padding: 0;
+    box-shadow: none;
+    cursor: pointer;
+    -webkit-appearance: none;
+    appearance: none;
+    background: #fff;
+    border: none;
+    width: 15px;
+    height: 15px;
+    border-radius: 5px;
+    outline: none;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
+    transition: background-color 0.3s ease;
 }
 
-function updateScore(result) {
-    const playerScoreSpan = document.getElementById('player-score');
-    const cpuScoreSpan = document.getElementById('cpu-score');
-    const resultText = document.getElementById('result');
-
-    if (result === 'player') {
-        playerScore++;
-        resultText.textContent = 'Win';
-        resultText.className = 'result-text result-win';
-    } else if (result === 'cpu') {
-        cpuScore++;
-        resultText.textContent = 'Loss';
-        resultText.className = 'result-text result-loss';
-    } else {
-        resultText.textContent = 'Draw';
-        resultText.className = 'result-text result-draw';
-    }
-
-    playerScoreSpan.textContent = playerScore;
-    cpuScoreSpan.textContent = cpuScore;
+input[type="checkbox"]:checked {
+    background-color: #87CEFA;
 }
 
-function endGame() {
-    const resultText = document.getElementById('result');
-    const choices = document.querySelectorAll('.choice');
-    const currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
-    const username = currentUser ? currentUser.username : 'Player';
+.game {
+    min-width: 930px;
+    min-height: 600px;
+    background-color: #fff;
+    border-radius: 15px;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
 
-    choices.forEach(button => button.disabled = true);
-
-    if (playerScore === 3) {
-        resultText.textContent = `${username} Wins`;
-        resultText.className = 'result-text result-win';
-        updateCoins(1);
-    } else {
-        resultText.textContent = 'Computer Wins';
-        resultText.className = 'result-text result-loss';
-    }
-    document.getElementById('replay').style.display = 'block';
+    /* Temporary */
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-function handleReplayClick(event) {
-    event.preventDefault();
-    event.stopPropagation();
-    resetGame();
+#logout-success,
+#delete-success {
+    display: none;
+    color: green;
 }
 
-function resetGame() {
-    playerScore = 0;
-    cpuScore = 0;
-    updateScoreDisplay();
-    resetGameInterface();
+.opacity {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.25);
+    z-index: 10;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    perspective: 4000px;
 }
 
-function updateScoreDisplay() {
-    const resultText = document.getElementById('result');
-    document.getElementById('player-score').textContent = '0';
-    document.getElementById('cpu-score').textContent = '0';
-    resultText.textContent = 'Choose';
-    resultText.className = 'result-text';
+.logout-container {
+    position: fixed;
+    top: 110px;
+    left: calc(50% - 232.5px);
+    width: 465px;
+    height: 600px;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 11;
+    cursor: pointer;
+    transition: transform 1s ease-in-out;
+    transform-style: preserve-3d;
 }
 
-function resetGameInterface() {
-    const choices = document.querySelectorAll('.choice');
-    choices.forEach(button => button.disabled = false);
-    document.getElementById('replay').style.display = 'none';
+.logout-content,
+.delete-content {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: 15px;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transition: transform 1s ease-in-out;
+    background: #fff;
+    cursor: default;
+    z-index: 12;
 }
 
-function initializeReplayButton() {
-    const replayButton = document.getElementById('replay');
-    replayButton.removeEventListener('click', handleReplayClick);
-    replayButton.addEventListener('click', handleReplayClick, true);
+.delete-content {
+    /* Hide */
+    transform: rotateY(180deg);
 }
 
-function updateGameUsername() {
-    var currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
-    if (currentUser && currentUser.username) {
-        var gameUsernameDisplay = document.querySelector('.user-name-game');
-        if (gameUsernameDisplay) {
-            gameUsernameDisplay.textContent = currentUser.username;
-        }
-    }
+.logout-container span,
+.delete-content span {
+    width: 75%;
 }
 
-function showGame() {
-    var gameElement = document.getElementById('game');
-    gameElement.style.display = 'flex';
-    updateGameUsername();
+.logout-content button,
+.delete-content button {
+    width: 50%;
+    padding: 15px;
+    border-radius: 15px;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
 }
 
-document.addEventListener('DOMContentLoaded', function () {
-    const openRpsButton = document.getElementById('open-rps');
-    const rpsOverlay = document.getElementById('rps-overlay');
-    const rpsContainer = document.getElementById('rps-container');
-
-    openRpsButton.addEventListener('click', function () {
-        rpsOverlay.style.display = 'flex';
-    });
-
-    rpsOverlay.addEventListener('click', function (event) {
-        if (event.target === rpsOverlay) {
-            rpsOverlay.style.display = 'none';
-            resetGame();
-        }
-    });
-
-    rpsContainer.addEventListener('click', function (event) {
-        event.stopPropagation();
-    });
-});
-
-function updateCoins(amount) {
-    var currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
-    if (!currentUser.coins) currentUser.coins = 0;
-    currentUser.coins += amount;
-    sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
-    document.getElementById('user-coins').textContent = currentUser.coins;
-    saveUserProgress(currentUser);
-    updateUserInfoDisplays();
+.red {
+    color: #fff;
+    background-color: #EF9A9A;
+    transition: background-color 0.3s ease;
 }
 
-function saveUserProgress(user) {
-    var users = JSON.parse(localStorage.getItem('users'));
-    var userIndex = users.findIndex(u => u.email === user.email);
-    if (userIndex !== -1) {
-        users[userIndex] = user;
-        localStorage.setItem('users', JSON.stringify(users));
-    }
+.red:hover {
+    background-color: #E57373;
 }
 
-// Number Game
-function checkNumberGuess() {
-    event.preventDefault();
-    const guessInput = document.getElementById('number-guess-input');
-    const userGuess = parseInt(guessInput.value);
-    const feedbackText = document.getElementById('number-guess-feedback');
-    const chancesDisplay = document.getElementById('number-guess-chances');
-
-    if (isNaN(userGuess) || userGuess < 1 || userGuess > 100) {
-        feedbackText.innerText = 'Invalid Input';
-        feedbackText.style.color = 'red';
-        return false;
-    }
-
-    chancesLeft--;
-    chancesDisplay.innerText = chancesLeft;
-
-    if (userGuess === secretNumber) {
-        feedbackText.innerText = 'Win';
-        feedbackText.style.color = 'green';
-        updateCoins(1);
-        endNumberGame();
-    } else if (chancesLeft <= 0) {
-        feedbackText.innerText = 'Lose, Number ' + secretNumber;
-        feedbackText.style.color = 'red';
-        endNumberGame();
-    } else {
-        feedbackText.innerText = userGuess > secretNumber ? 'Lower' : 'Higher';
-        feedbackText.style.color = 'orange';
-    }
-    return false;
+.red:active {
+    background-color: #EF5350;
 }
 
-function endNumberGame() {
-    document.getElementById('number-replay-button').style.display = 'block';
-    document.getElementById('number-guess-input').disabled = true;
-    document.getElementById('guess-button').disabled = true;
+.rps-container {
+    cursor: auto;
+    padding: 30px;
+    gap: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: white;
+    border-radius: 15px;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
 }
 
-function restartNumberGame() {
-    secretNumber = Math.floor(Math.random() * 100) + 1;
-    chancesLeft = 6;
-
-    const numberInput = document.getElementById('number-guess-input');
-    const guessButton = document.getElementById('guess-button');
-    const feedbackText = document.getElementById('number-guess-feedback');
-    const chancesDisplay = document.getElementById('number-guess-chances');
-
-    chancesDisplay.innerText = chancesLeft;
-    feedbackText.innerText = 'Enter Number';
-    feedbackText.style.color = 'black';
-    numberInput.value = '';
-    numberInput.disabled = false;
-    guessButton.disabled = false;
-    document.getElementById('number-replay-button').style.display = 'none';
+.rps-container h1 {
+    margin: 0;
 }
 
-document.addEventListener('DOMContentLoaded', function () {
-    initializeNumberGame();
-});
-
-function initializeNumberGame() {
-    secretNumber = Math.floor(Math.random() * 100) + 1;
-    chancesLeft = 6;
-    document.getElementById('number-guess-chances').innerText = chancesLeft;
+.choice {
+    display: inline;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    transition: transform 0.3s ease;
 }
 
-// Close Guess Number
-document.addEventListener('DOMContentLoaded', function () {
-    const openNumberGameBtn = document.getElementById('open-number-game');
-    const numberGameOverlay = document.getElementById('number-game-overlay');
-
-    openNumberGameBtn.addEventListener('click', function () {
-        numberGameOverlay.style.display = numberGameOverlay.style.display === 'none' ? 'flex' : 'none';
-    });
-
-    numberGameOverlay.addEventListener('click', function (event) {
-        if (event.target === numberGameOverlay) {
-            numberGameOverlay.style.display = 'none';
-            restartNumberGame();
-        }
-    });
-
-    initializeNumberGame();
-});
-
-/* Theme(s) */
-const themes = {
-    red: 'red-theme', // Basic(s)
-    green: 'green-theme',
-    blue: 'blue-theme',
-    brown: 'brown-theme', // Secret(s)
-    pink: 'pink-theme',
-    gold: 'gold-theme',
-    diamond: 'diamond-theme',
-    default: 'default-theme'
-};
-
-function applyColorTheme(color) {
-    const themeClass = themes[color] || themes.default;
-    const elementsToColor = document.querySelectorAll('html, body, .header, .advertisement, .screen');
-
-    elementsToColor.forEach(elem => {
-        Object.values(themes).forEach(theme => {
-            elem.classList.remove(theme);
-        });
-
-        elem.classList.add(themeClass);
-    });
-
-    var currentUser = getCurrentUser();
-    if (currentUser) {
-        currentUser.lastColor = color;
-        sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
-    }
+.choice img {
+    width: 100px;
+    transition: transform 0.3s ease;
 }
 
-function changeColor(color, cost) {
-    var currentUser = getCurrentUser();
-
-    if (currentUser.coins >= cost) {
-        currentUser.coins -= cost;
-        sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
-        updateUserInfoDisplays();
-        applyColorTheme(color);
-        currentUser.lastColor = color;
-        saveUserProgress(currentUser);
-    }
+.choice:hover img {
+    transform: scale(1.1);
 }
 
-function restoreUserColor() {
-    const currentUser = getCurrentUser();
-    if (currentUser && currentUser.lastColor) {
-        applyColorTheme(currentUser.lastColor);
-    } else {
-        applyColorTheme('default');
-    }
+.choice:active img {
+    transform: scale(1);
 }
 
-function getCurrentUser() {
-    return JSON.parse(sessionStorage.getItem('currentUser'));
+.replay {
+    color: #fff;
+    transition: background-color 0.3s ease;
+    background-color: #a5d6a7;
+    cursor: pointer;
+    width: 50%;
+    padding: 15px;
+    border-radius: 15px;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
 }
 
-function updateUserInfoDisplays() {
-    const currentUser = getCurrentUser();
-    const userNameDisplays = document.querySelectorAll('#user-name, .user-name-game');
-    const userCoinsDisplay = document.getElementById('user-coins');
+.replay:hover {
+    background-color: #81c784;
+}
 
-    if (currentUser) {
-        userNameDisplays.forEach(display => display.textContent = `Hello, ${currentUser.username}`);
-        userCoinsDisplay.textContent = currentUser.coins || 0;
-        updateThemeButtonVisibility();
-    }
+.replay:active {
+    background-color: #66bb6a;
+}
+
+.result-text {
+    color: black;
+}
+
+.result-win {
+    color: green;
+}
+
+.result-loss {
+    color: red;
+}
+
+.result-draw {
+    color: orange;
+}
+
+.game-overlay {
+    cursor: pointer;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 15px;
+    background-color: rgba(0, 0, 0, 0.25);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+}
+
+#game {
+    position: relative;
+}
+
+.coin-display,
+h2,
+.coin-display span {
+    position: absolute;
+    top: 12.5px;
+    right: 20px;
+    color: #E6BE8A;
+    margin: 0;
+    padding: 0;
+}
+
+.num-container {
+    cursor: auto;
+    padding: 30px;
+    gap: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: white;
+    border-radius: 15px;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
+}
+
+.num-container h1 {
+    margin: 0;
+}
+
+.input-guess-container {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+}
+
+.input-style,
+.guess-button {
+    flex: 1;
+    padding: 15px;
+    margin: 7.5px;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
+    border-radius: 15px;
+    text-align: center;
+}
+
+.guess-button {
+    background-color: #64B5F6;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.guess-button:hover {
+    background-color: #42A5F5;
+}
+
+.guess-button:active {
+    background-color: #2196F3;
+}
+
+.confirm,
+.red {
+    flex: 0 0 calc(60% - 15px);
+}
+
+.button-container button:not(.confirm):not(.red) {
+    flex: 0 0 calc(40% - 15px);
+}
+
+.game button {
+    margin-bottom: 7.5px;
+}
+
+.game-section,
+.shop-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Basic Theme(s) */
+.red-theme,
+.red-theme body {
+    background-color: #FFB3B3;
+}
+
+.green-theme,
+.green-theme body {
+    background-color: #C4E1CC;
+}
+
+.blue-theme,
+.blue-theme body {
+    background-color: #B8DBF2;
 }
 
 /* Secret Theme(s) */
-function updateThemeButtonVisibility() {
-    const currentUser = getCurrentUser();
-    const brownButton = document.getElementById('brown-theme-btn');
-    const pinkButton = document.getElementById('pink-theme-btn');
-    const goldButton = document.getElementById('gold-theme-btn');
-    const diamondButton = document.getElementById('diamond-theme-btn');
-
-    if (!currentUser) {
-        brownButton.style.display = 'none';
-        pinkButton.style.display = 'none';
-        goldButton.style.display = 'none';
-        diamondButton.style.display = 'none';
-        return;
-    }
-
-    // Coin Limit(s)
-    brownButton.style.display = currentUser.coins >= 5 ? 'block' : 'none';
-    pinkButton.style.display = currentUser.coins >= 10 ? 'block' : 'none';
-    goldButton.style.display = currentUser.coins >= 15 ? 'block' : 'none';
-    diamondButton.style.display = currentUser.coins >= 20 ? 'block' : 'none';
+.brown-theme,
+.brown-theme body {
+    background-color: #E5C8A8;
 }
 
-document.addEventListener('DOMContentLoaded', function () {
-    updateThemeButtonVisibility();
-});
+.pink-theme,
+.pink-theme body {
+    background-color: #FFA6C9;
+}
+
+.gold-theme,
+.gold-theme body {
+    background-color: #E6BE8A;
+}
+
+.diamond-theme,
+.diamond-theme body {
+    background-color: #E0FFFF;
+}
 
 /* Sparkle(s) */
-function addStar() {
-    var currentUser = getCurrentUser();
-    if (currentUser && (currentUser.lastColor === 'gold' || currentUser.lastColor === 'diamond')) {
-        var s = document.createElement('div');
-        s.className = 'star';
-        s.style.setProperty('--size', Math.random() * 10 + 3 + 'vmin');
-        s.style.left = Math.floor(Math.random() * 100) + '%';
-        s.style.top = Math.floor(Math.random() * 100) + '%';
-        s.onanimationend = function () { this.remove(); };
-        document.body.appendChild(s);
-    } else {
-        document.querySelectorAll('.star').forEach(function (star) {
-            star.remove();
-        });
-    }
+.star {
+    --size: 20vmin;
+    width: var(--size);
+    height: var(--size);
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px,
+        rgba(0, 0, 0, 0.3) 0px 30px 60px -30px,
+        rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
+    border-radius: .5em;
+    --mask: radial-gradient(var(--holes) at var(--holes) var(--holes), #0000 99%, #000) calc(var(--holes)*-1) calc(var(--holes)*-1);
+    -webkit-mask: var(--mask);
+    mask: var(--mask);
+    position: fixed;
+    background: #fff;
+    animation: sparkle 1s linear forwards;
 }
 
-setInterval(addStar, 50);
+@keyframes sparkle {
 
-window.onload = function () {
-    logout();
-};
+    0%,
+    100% {
+        opacity: 0;
+        transform: scale(0);
+        transform: rotate(45deg);
+    }
+
+    20%,
+    80% {
+        opacity: 1;
+        transform: scale(1);
+        transform: rotate(45deg);
+    }
+}
