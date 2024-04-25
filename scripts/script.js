@@ -82,6 +82,8 @@ function login(event) {
         loginSuccess.textContent = 'Login Successful';
         sessionStorage.setItem('currentUser', JSON.stringify(user));
         updateUsernameDisplay();
+        updateGameUsername();
+        updateUserInfoDisplays();
         // Delay
         setTimeout(function () {
             logoutButton.style.display = 'block'; // Show Logout Button
@@ -89,8 +91,6 @@ function login(event) {
             userNameDisplay.style.display = 'block';
             game.style.display = 'flex';
             container.style.display = 'none';
-            updateUsernameDisplay();
-            updateGameUsername();
             applyColorTheme(user.lastColor || 'default');
             updateThemeButtonVisibility();
             clear();
@@ -350,6 +350,7 @@ function clearAllStorage() {
 
 function forwards() {
     var flip = document.getElementById('logout-container');
+    displayAllUsers();
     if (!flip.style.transform.includes("180deg")) {
         flip.style.transform = "rotateY(180deg)";
     }
@@ -363,29 +364,21 @@ function backwards() {
 }
 
 function logoutContainer() {
-    var popup = document.getElementById('logout-container');
-    var header = document.querySelector('.header');
-
-    if (popup.style.display === 'none') {
-        popup.style.display = 'flex';
-        popup.classList.add('active');
-        header.style.pointerEvents = 'none';
-        document.addEventListener('click', closeLogout, true);
-    } else {
-        closeLogout();
-    }
-}
-
-function logoutContainer() {
     var opacity = document.getElementById('opacity');
     var logoutContainer = document.getElementById('logout-container');
     var header = document.querySelector('.header');
+
+    // Fetch current user from session storage
+    var currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
+    var username = currentUser ? currentUser.username : "User"; // Fallback to "User" if no user is logged in
+
+    // Set the username in the logout popup
+    document.getElementById('user-greeting').textContent = 'Bye, ' + username;
 
     if (logoutContainer.style.display === 'none') {
         opacity.style.display = 'flex';
         logoutContainer.style.display = 'flex';
         header.style.pointerEvents = 'none';
-        displayAllUsers();
         document.addEventListener('click', closeLogout, true);
     } else {
         closeLogout();
@@ -422,33 +415,34 @@ function updateUsernameDisplay() {
     var currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
     if (currentUser && currentUser.username) {
         var userGreetingSpans = document.querySelectorAll('#user-greeting');
-        userGreetingSpans.forEach(span => {
-            span.textContent = `Bye, ${currentUser.username}`;
-        });
-        var userNameDisplays = document.querySelectorAll('#user-name, .user-name-game'); // Update all relevant username displays
-        userNameDisplays.forEach(display => {
+        userGreetingSpans.forEach(span => span.textContent = currentUser.username);
+
+        var generalUserNameDisplays = document.querySelectorAll('#user-name:not(.user-name-game)');
+        generalUserNameDisplays.forEach(display => {
             display.textContent = `Hello, ${currentUser.username}`;
-            document.getElementById('user-coins').textContent = currentUser.coins || 0;
         });
+    }
+}
+
+function forwards() {
+    var flip = document.getElementById('logout-container');
+    displayAllUsers();
+    if (!flip.style.transform.includes("180deg")) {
+        flip.style.transform = "rotateY(180deg)";
     }
 }
 
 function displayAllUsers() {
     var allUsersContainer = document.getElementById('all-users');
-    var users = JSON.parse(localStorage.getItem('users'));
+    var users = JSON.parse(localStorage.getItem('users') || '[]');
     if (users && users.length > 0) {
         var usernames = users.map(user => user.username);
-        var formattedUsernames = '';
-        if (usernames.length > 1) {
-
-            formattedUsernames = usernames.slice(0, -1).join(', ') + ' & ' + usernames[usernames.length - 1];
-        } else {
-
-            formattedUsernames = usernames[0];
-        }
+        var formattedUsernames = usernames.length > 1
+            ? usernames.slice(0, -1).join(', ') + ' & ' + usernames[usernames.length - 1]
+            : usernames[0];
         allUsersContainer.textContent = 'Bye, ' + formattedUsernames;
     } else {
-        allUsersContainer.textContent = 'NO User(s)';
+        allUsersContainer.textContent = 'No User(s)';
     }
 }
 
@@ -531,6 +525,7 @@ function endGame() {
     document.getElementById('replay').style.display = 'block';
 }
 
+
 function handleReplayClick(event) {
     event.preventDefault();
     event.stopPropagation();
@@ -567,17 +562,16 @@ function initializeReplayButton() {
 function updateGameUsername() {
     var currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
     if (currentUser && currentUser.username) {
-        var gameUsernameDisplay = document.querySelector('.user-name-game');
-        if (gameUsernameDisplay) {
-            gameUsernameDisplay.textContent = currentUser.username;
-        }
+        var gameUsernameDisplays = document.querySelectorAll('.user-name-game');
+        gameUsernameDisplays.forEach(display => {
+            display.textContent = currentUser.username;
+        });
     }
 }
 
 function showGame() {
     var gameElement = document.getElementById('game');
     gameElement.style.display = 'flex';
-    updateGameUsername();
 }
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -765,15 +759,29 @@ function getCurrentUser() {
 
 function updateUserInfoDisplays() {
     const currentUser = getCurrentUser();
-    const userNameDisplays = document.querySelectorAll('#user-name, .user-name-game');
-    const userCoinsDisplay = document.getElementById('user-coins');
-
     if (currentUser) {
-        userNameDisplays.forEach(display => display.textContent = `Hello, ${currentUser.username}`);
-        userCoinsDisplay.textContent = currentUser.coins || 0;
+        const userNameDisplays = document.querySelectorAll('#user-name');
+        const gameUserNameDisplays = document.querySelectorAll('.user-name-game');
+
+        userNameDisplays.forEach(display => {
+            if (!display.classList.contains('user-name-game')) {
+                display.textContent = `Hello, ${currentUser.username}`;
+            }
+        });
+
+        gameUserNameDisplays.forEach(display => {
+            display.textContent = currentUser.username;
+        });
+
+        const userCoinsDisplay = document.getElementById('user-coins');
+        if (userCoinsDisplay) {
+            userCoinsDisplay.textContent = currentUser.coins || 0;
+        }
+
         updateThemeButtonVisibility();
     }
 }
+
 
 /* Secret Theme(s) */
 function updateThemeButtonVisibility() {
