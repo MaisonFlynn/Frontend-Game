@@ -705,11 +705,9 @@ const themes = {
     red: 'red-theme', // Basic(s)
     green: 'green-theme',
     blue: 'blue-theme',
-    brown: 'brown-theme', // Secret(s)
-    pink: 'pink-theme',
-    gold: 'gold-theme',
+    gold: 'gold-theme', // Secret(s)
     diamond: 'diamond-theme',
-    default: 'default-theme'
+    default: 'default-theme' // Default
 };
 
 function applyColorTheme(color) {
@@ -786,24 +784,18 @@ function updateUserInfoDisplays() {
 /* Secret Theme(s) */
 function updateThemeButtonVisibility() {
     const currentUser = getCurrentUser();
-    const brownButton = document.getElementById('brown-theme-btn');
-    const pinkButton = document.getElementById('pink-theme-btn');
     const goldButton = document.getElementById('gold-theme-btn');
     const diamondButton = document.getElementById('diamond-theme-btn');
 
     if (!currentUser) {
-        brownButton.style.display = 'none';
-        pinkButton.style.display = 'none';
         goldButton.style.display = 'none';
         diamondButton.style.display = 'none';
         return;
     }
 
     // Coin Limit(s)
-    brownButton.style.display = currentUser.coins >= 5 ? 'block' : 'none';
-    pinkButton.style.display = currentUser.coins >= 10 ? 'block' : 'none';
-    goldButton.style.display = currentUser.coins >= 15 ? 'block' : 'none';
-    diamondButton.style.display = currentUser.coins >= 20 ? 'block' : 'none';
+    goldButton.style.display = currentUser.coins >= 5 ? 'block' : 'none';
+    diamondButton.style.display = currentUser.coins >= 10 ? 'block' : 'none';
 }
 
 document.addEventListener('DOMContentLoaded', function () {
