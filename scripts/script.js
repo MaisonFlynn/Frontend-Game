@@ -28,7 +28,7 @@ function initializeTestUser() {
         username: 'Test',
         email: 'Test',
         password: 'Test',
-        coins: 1000
+        coins: 100
     };
 
     var users = JSON.parse(localStorage.getItem('users') || '[]');
@@ -38,7 +38,7 @@ function initializeTestUser() {
         users.push(testUser);
         localStorage.setItem('users', JSON.stringify(users));
     } else {
-        existingUser.coins = 1000; // Always 1000 Coins
+        existingUser.coins = 100; // Always 100 Coins
         localStorage.setItem('users', JSON.stringify(users));
     }
 }
