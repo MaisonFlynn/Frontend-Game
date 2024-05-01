@@ -515,7 +515,7 @@ function endGame() {
     choices.forEach(button => button.disabled = true);
 
     if (playerScore === 3) {
-        resultText.textContent = `${username} Wins`;
+        resultText.innerHTML = `${username} Wins <span style="color:#E6BE8A;">🪙1</span>`;
         resultText.className = 'result-text result-win';
         updateCoins(1);
     } else {
@@ -632,7 +632,7 @@ function checkNumberGuess() {
     chancesDisplay.innerText = chancesLeft;
 
     if (userGuess === secretNumber) {
-        feedbackText.innerText = 'Win';
+        feedbackText.innerHTML = 'Win <span style="color:#E6BE8A;">🪙1</span>';
         feedbackText.style.color = 'green';
         updateCoins(1);
         endNumberGame();
@@ -655,7 +655,7 @@ function endNumberGame() {
 
 function restartNumberGame() {
     secretNumber = Math.floor(Math.random() * 100) + 1;
-    chancesLeft = 6;
+    chancesLeft = 7;
 
     const numberInput = document.getElementById('number-guess-input');
     const guessButton = document.getElementById('guess-button');
@@ -677,7 +677,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 function initializeNumberGame() {
     secretNumber = Math.floor(Math.random() * 100) + 1;
-    chancesLeft = 6;
+    chancesLeft = 7;
     document.getElementById('number-guess-chances').innerText = chancesLeft;
 }
 
