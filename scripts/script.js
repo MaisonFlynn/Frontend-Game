@@ -342,7 +342,7 @@ function clearAllStorage() {
 
     // Hide Logout
     setTimeout(function () {
-        document.querySelector('.logout-container').style.display = 'none'; // Hide the logout container
+        document.querySelector('.logout-container').style.display = 'none';
     }, 1000);
     logout();
     clear();
@@ -368,11 +368,11 @@ function logoutContainer() {
     var logoutContainer = document.getElementById('logout-container');
     var header = document.querySelector('.header');
 
-    // Fetch current user from session storage
+    // Fetch Current User FROM Session Storage
     var currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
-    var username = currentUser ? currentUser.username : "User"; // Fallback to "User" if no user is logged in
+    var username = currentUser ? currentUser.username : "User"; // Fallback TO "User" IF NO User IS Logged IN
 
-    // Set the username in the logout popup
+    // Set Username IN THE Logout Popup
     document.getElementById('user-greeting').textContent = 'Bye, ' + username;
 
     if (logoutContainer.style.display === 'none') {
